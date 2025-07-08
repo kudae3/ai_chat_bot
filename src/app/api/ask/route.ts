@@ -5,10 +5,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const { question } = await req.json();
+  console.log("Received question:", question);
+  
 
   // Get user question embedding
   const userVector = await getEmbedding(question);
-  console.log("User vector:", userVector);
+  console.log("Question vector:", userVector);
   
 
   // Search in Qdrant
