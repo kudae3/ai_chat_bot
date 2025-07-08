@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Bot Project
 
-## Getting Started
+This project is an AI-powered chatbot using Ollama, Qdrant, and Prisma. It supports semantic search and context-aware answers using vector embeddings.
 
-First, run the development server:
+## Setup Instructions
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Setup environment variables
+
+Copy the example environment file and edit as needed:
+
+```bash
+cp .env.example .env
+```
+
+### 3. Install Ollama
+
+Follow instructions at [Ollama](https://ollama.com/) to install Ollama on your machine.
+
+### 4. Download AI models
+
+Pull the required chat and embedding models:
+
+```bash
+ollama pull llama3.2
+ollama pull nomic-embed-text
+```
+
+- `deepseek`, `llama3.2` are chat models.
+- `nomic-embed-text` is the embedding model.
+
+### 5. Setup Qdrant
+
+- [Sign up for Qdrant Cloud](https://cloud.qdrant.io/) or run locally.
+- Set `QDRANT_API_URL` and `QDRANT_API_KEY` in your `.env`.
+
+#### Create the Qdrant collection
+
+You must create a collection before uploading vectors. Example (adjust URL and API key as needed):
+
+```bash
+curl -X PUT "https://<your-qdrant-url>/collections/chatbot" \
+  -H "Content-Type: application/json" \
+  -H "api-key: <your-qdrant-api-key>" \
+  -d '{
+    "vectors": {
+      "size": 768,
+      "distance": "Cosine"
+    }
+  }'
+```
+
+### 6. Setup Prisma
+
+- Make sure your database is running and `DATABASE_URL` is set in `.env`.
+
+```bash
+DATABASE_URL="mysql://root:1234@localhost:3306/my_database"
+```
+
+- And then, tell Prisma to introspect
+
+```bash
+npx prisma db pull
+```
+
+- This will read your database schema and generate the models in prisma/schema.prisma
+
+- Generate the Prisma client:
+
+```bash
+npx prisma generate
+```
+
+### 7. Start services
+
+- Start Ollama:
+
+```bash
+ollama serve
+```
+
+- Start the Next.js dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Usage
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Preload knowledge base
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To upload your knowledge base to Qdrant, call the preload API:
 
-## Learn More
+```bash
+curl -X POST http://localhost:3000/api/preload
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Ask questions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Send a POST request to the ask API with a JSON body:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```json
+{
+  "question": "Explain Programming Basic With Javascript Course"
+}
+```
 
-## Deploy on Vercel
+Example using curl:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+curl -X POST http://localhost:3000/api/ask \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Explain Programming Basic With Javascript Course"}'
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Testing
+
+- Use Postman or curl to test `/api/preload` and `/api/ask` endpoints.
+- Ensure that `/api/preload` is called before asking questions, so the vector database is populated.
+
+---
+
+**Note:**  
+- Make sure all services (Ollama, Qdrant, database) are running before starting the app.
+- Adjust vector size in Qdrant collection to match your embedding model (e.g., 768 for `nomic-embed-text`).
