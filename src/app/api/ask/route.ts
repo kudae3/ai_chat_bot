@@ -17,11 +17,11 @@ export async function POST(req: NextRequest) {
 
   let answer: string;
   
-  if (match &&  match.score > 0.4) {
-    const context = `${match.payload.title}\n${match.payload.body}`;
+  if (match) {
+    const context = `${match.payload.title}\n\n${match.payload.body}`;
     answer = await chatWithOllama(
-      `Answer the user's question using this context: "${context}". Question: ${question}`
-    );
+    `Context:\n${context}\n\nUser's question: ${question}\n\nAnswer the user's question using the above context.`
+  );
     console.log("Using Qdrant answer:", answer);
     
   } else {
