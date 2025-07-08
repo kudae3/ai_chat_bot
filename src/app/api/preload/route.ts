@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
+import { prisma } from "@/lib/prisma";
 
 const QDRANT_API_URL = process.env.QDRANT_API_URL!;
 const QDRANT_API_KEY = process.env.QDRANT_API_KEY!;
@@ -19,17 +18,17 @@ async function getEmbedding(text: string): Promise<number[]> {
 
 export async function POST() {
   try {
-    const filePath = path.join(process.cwd(), "data", "knowledge.json");
-    const fileContents = await fs.readFile(filePath, "utf8");
-    const knowledgeBase = JSON.parse(fileContents);
+    // 1. Fetch blogs from DB
+    const blogs = await prisma.posts.findMany({
+      select: { id: true, title: true, body: true },
+    });
 
-    type KnowledgeItem = { question: string; answer: string };
-
+    // 2. Generate embeddings and prepare Qdrant points
     const points = await Promise.all(
-      (knowledgeBase as KnowledgeItem[]).map(async (item: KnowledgeItem, index: number) => ({
-        id: index,
-        vector: await getEmbedding(item.question),
-        payload: { question: item.question, answer: item.answer },
+      blogs.map(async (blog) => ({
+        id: Number(blog.id),
+        vector: await getEmbedding(`${blog.title}\n${blog.body}`),
+        payload: { title: blog.title, body: blog.body },
       }))
     );
 

@@ -64,8 +64,9 @@ export async function POST(req: NextRequest) {
   
 
   let answer: string;
+  
   if (match &&  match.score > 0.4) {
-    const context = match.payload.answer;
+    const context = `${match.payload.title}\n${match.payload.body}`;
     answer = await chatWithOllama(
       `Answer the user's question using this context: "${context}". Question: ${question}`
     );
