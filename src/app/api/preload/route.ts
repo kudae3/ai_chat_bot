@@ -1,20 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import getEmbedding from "@/lib/getEmbedding";
 
 const QDRANT_API_URL = process.env.QDRANT_API_URL!;
 const QDRANT_API_KEY = process.env.QDRANT_API_KEY!;
-const OLLAMA_EMBEDDING_MODEL = process.env.OLLAMA_EMBEDDING_MODEL!;
-
-// Get embedding vector from Ollama
-async function getEmbedding(text: string): Promise<number[]> {
-  const response = await fetch("http://localhost:11434/api/embeddings", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: OLLAMA_EMBEDDING_MODEL, prompt: text }),
-  });
-  const data = await response.json();
-  return data.embedding;
-}
 
 export async function POST() {
   try {
