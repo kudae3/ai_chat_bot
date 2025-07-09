@@ -31,7 +31,7 @@ ollama pull llama3.2
 ollama pull nomic-embed-text
 ```
 
-- `deepseek`, `llama3.2` are chat models.
+- `llama3.2` is chat model.
 - `nomic-embed-text` is the embedding model.
 
 ### 5. Setup Qdrant
@@ -90,35 +90,6 @@ ollama serve
 ```bash
 npm run dev
 ```
-
-## Usage
-
-### Preload knowledge base
-
-To upload your knowledge base to Qdrant, call the preload API:
-
-```bash
-curl -X POST http://localhost:3000/api/preload
-```
-
-### Ask questions
-
-Send a POST request to the ask API with a JSON body:
-
-```json
-{
-  "question": "Explain Programming Basic With Javascript Course"
-}
-```
-
-Example using curl:
-
-```bash
-curl -X POST http://localhost:3000/api/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question": "Explain Programming Basic With Javascript Course"}'
-```
-
 ## Testing
 
 - Use Postman or curl to test `/api/preload` and `/api/ask` endpoints.
