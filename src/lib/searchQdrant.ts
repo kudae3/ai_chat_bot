@@ -16,7 +16,6 @@ async function searchQdrant(vector: number[]) {
     }),
   });
   const data = await response.json();
-  console.log("Qdrant search response:", data?.result?.points);
   
   return data?.result?.points[0];
 }
