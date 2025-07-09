@@ -10,8 +10,8 @@ async function searchQdrant(vector: number[]) {
     },
     body: JSON.stringify({
       query: vector,
-      limit: 1, // top 1 closest match
-      score_threshold: 0.4, // similarity threshold
+      limit: 1,
+      score_threshold: 0.5,
       with_payload: true, // include payload in response
     }),
   });
