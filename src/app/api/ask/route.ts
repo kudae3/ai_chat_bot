@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   let answer: string;
   
   if (match) {
-    const context = `${match.payload.title}\n\n${match.payload.body}\n\n${match.payload.guarantee ?? ""}`;
+    const context = `${match.payload.title ?? ""}\n\n${match.payload.body ?? ""}\n\n${match.payload.guarantee ?? ""}`;
     answer = await chatWithOllama(
     `Context:\n${context}\n\nUser's question: ${question}\n\nAnswer the user's question using the above context. Make sure to include the data from the context in your answer since that is first priority.`
   );
