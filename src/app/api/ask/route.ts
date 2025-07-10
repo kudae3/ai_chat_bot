@@ -38,14 +38,20 @@ export async function POST(req: NextRequest) {
           ` Based on the following context, answer the user's question.
             Context:\n${context}
             Question: ${question}`
-        );
+    );
     
     
     console.log("Using Qdrant answer:", answer);
     
   } else {
-    answer = await chatWithOllama(
-      `No context found. Answer the user's question as best you can. Question: ${question}`
+    answer = isBurmese
+      ? await chatWithOllama(
+          ` အောက်ပါမေးခွန်းကို ဖြေပါ။
+             ေမးခွန်း : ${question}`
+        )
+      : await chatWithOllama(
+          ` Answer the user's question as best you can
+            Question: ${question}`
     );
     console.log("Using Ollama answer:", answer);
   }
