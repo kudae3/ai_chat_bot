@@ -9,25 +9,25 @@ export async function POST() {
   try {
     
     // 1. Fetch blogs from DB
-    // const blogs = await prisma.posts.findMany({
-    //   select: { id: true, title: true, body: true },
-    // });
+    const blogs = await prisma.posts.findMany({
+      select: { id: true, title: true, body: true },
+    });
 
-    const courses = await prisma.courses.findMany({
+    const coursesPoints = await prisma.courses.findMany({
       select: { id: true, name: true, description: true, course_guarantee: true },
     });
 
     // 2. Generate embeddings and prepare Qdrant points
-    // const blogPoints = await Promise.all(
-    //   blogs.map(async (blog) => ({
-    //     id: Number(blog.id),
-    //     vector: await getEmbedding(`${blog.title}\n${blog.body}`),
-    //     payload: { title: blog.title, body: blog.body },
-    //   }))
-    // );
+    const blogPoints = await Promise.all(
+      blogs.map(async (blog) => ({
+        id: Number(blog.id),
+        vector: await getEmbedding(`${blog.title}\n${blog.body}`),
+        payload: { title: blog.title, body: blog.body },
+      }))
+    );
 
-    const points = await Promise.all(
-      courses.map(async (course) => ({
+    const coursePoints = await Promise.all(
+      coursesPoints.map(async (course) => ({
         id: Number(course.id),
         vector: await getEmbedding(`${course.name}\n${course.description}\n${course.course_guarantee}`),
         payload: { 
@@ -38,7 +38,7 @@ export async function POST() {
       }))
     );
 
-    // const points = [...blogPoints, ...coursePoints];
+    const points = [...blogPoints, ...coursePoints];
 
     // Upload to Qdrant
     const response = await fetch(`${QDRANT_API_URL}/collections/chatbot/points?wait=true`, {
