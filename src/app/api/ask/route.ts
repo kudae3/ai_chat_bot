@@ -44,15 +44,7 @@ export async function POST(req: NextRequest) {
     console.log("Using Qdrant answer:", answer);
     
   } else {
-    answer = isBurmese
-      ? await chatWithOllama(
-          ` အောက်ပါမေးခွန်းကို ဖြေပါ။
-             ေမးခွန်း : ${question}`
-        )
-      : await chatWithOllama(
-          ` Answer the user's question as best you can
-            Question: ${question}`
-    );
+    answer = await chatWithOllama(`${question}`)
     console.log("Using Ollama answer:", answer);
   }
 
