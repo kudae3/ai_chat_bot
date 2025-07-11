@@ -26,8 +26,12 @@ export async function POST(req: NextRequest) {
   let answer: string;
   
   if (match) {
-    const context = `${match.payload.title ?? ""}\n\n${match.payload.body ?? ""}\n\n${match.payload.guarantee ?? ""}`;
-    
+    let context = "";
+    const keys = Object.keys(match.payload);
+    keys.forEach((key) => {
+      context += `${match.payload[key] ?? ""}\n\n`;
+    });
+
     answer = isBurmese
       ? await chatWithOllama(
           ` ${context}  မေးခွန်း : ${question}`

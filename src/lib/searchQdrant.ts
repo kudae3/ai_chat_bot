@@ -11,7 +11,7 @@ async function searchQdrant(vector: number[]) {
     body: JSON.stringify({
       query: vector,
       limit: 1,
-      score_threshold: 0.6,
+      score_threshold: 0.7,
       with_payload: true, // include payload in response
     }),
   });
