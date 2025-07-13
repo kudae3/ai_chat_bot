@@ -10,14 +10,16 @@ async function searchQdrant(vector: number[]) {
     },
     body: JSON.stringify({
       query: vector,
-      limit: 1,
-      score_threshold: 0.5,
+      limit: 5,
+      score_threshold: 0.7,
       with_payload: true, // include payload in response
     }),
   });
   const data = await response.json();
+  console.log("All Qdrant responses:", data?.result?.points);
   
-  return data?.result?.points[0];
+  
+  return data?.result?.points;
 }
 
 export default searchQdrant;

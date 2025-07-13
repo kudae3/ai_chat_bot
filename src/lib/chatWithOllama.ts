@@ -6,7 +6,7 @@ async function chatWithOllama(prompt: string): Promise<string> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       model: OLLAMA_CHAT_MODEL,
-      prompt,
+      prompt: `Think of yourself as the Ai Assistant of Creative Coder Myanmar Learning Platform, https://creativecodermm.com/, ${prompt}`,
       stream: false,
     }),
   });

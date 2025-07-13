@@ -21,15 +21,19 @@ export async function POST(req: NextRequest) {
 
   // Search in Qdrant
   const match = await searchQdrant(userVector);
-  console.log("Qdrant match:", match); 
+  console.log("Qdrant match:", match); // [{}, {}, {}, ....] or just []
 
   let answer: string;
   
-  if (match) {
+
+  if (Array.isArray(match) && match.length > 0) {
     let context = "";
-    const entries = Object.entries(match.payload);
-    entries.forEach(([key, value]) => {
-      context += `${key}: ${value ?? ""}\n\n`;
+    match?.forEach((item) => {
+      const entries = Object.entries(item.payload);
+      entries.forEach(([key, value]) => {
+        context += `${key}: ${value ?? ""}\n\n`;
+      });
+      context += "----------------------\n"; // Separator for multiple matches
     });
 
     answer = isBurmese
@@ -37,22 +41,16 @@ export async function POST(req: NextRequest) {
           ` ${context}  မေးခွန်း : ${question}. မြန်မာဘာသာဖြင့် ဖြေကြားပါ။`
         )
       : await chatWithOllama(
-          ` Based on the following context, answer the user's question.
-            Context:\n${context}
-            Question: ${question}`
-    );
-    
-    
-    console.log("Using Qdrant answer:", answer);
-    
+            `Context:\n${context}
+             Question: ${question}`
+        );
   } else {
-    answer = await chatWithOllama(`${question}`)
-    console.log("Using Ollama answer:", answer);
+    answer = await chatWithOllama(`${question}`);
   }
 
   return NextResponse.json({
-    source: match ? "qdrant" : "ollama",
+    source: Array.isArray(match) && match.length > 0 ? "qdrant" : "ollama",
     answer,
-    similarity: match ? match.score : null,
+      similarity: Array.isArray(match) && match.length > 0 ? match[0]?.score ?? null : null,
   });
 }
