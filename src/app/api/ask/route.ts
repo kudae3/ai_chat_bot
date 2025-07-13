@@ -45,7 +45,13 @@ export async function POST(req: NextRequest) {
              Question: ${question}`
         );
   } else {
-    answer = await chatWithOllama(`${question}`);
+    answer = isBurmese
+      ? await chatWithOllama(
+          ` မေးခွန်း : ${question}. မြန်မာဘာသာဖြင့် ဖြေကြားပါ။`
+        )
+      : await chatWithOllama(
+            `Question: ${question}`
+        );
   }
 
   return NextResponse.json({
