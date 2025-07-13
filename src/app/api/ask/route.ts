@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     answer = isBurmese
       ? await chatWithOllama(
-          ` ${context}  မေးခွန်း : ${question}`
+          ` ${context}  မေးခွန်း : ${question}. မြန်မာဘာသာဖြင့် ဖြေကြားပါ။`
         )
       : await chatWithOllama(
           ` Based on the following context, answer the user's question.
