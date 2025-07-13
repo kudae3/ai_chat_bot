@@ -13,7 +13,7 @@ export async function POST() {
       select: { id: true, title: true, body: true },
     });
 
-    const coursesPoints = await prisma.courses.findMany({
+    const courses = await prisma.courses.findMany({
       select: { id: true, name: true, description: true, course_guarantee: true },
     });
 
@@ -27,7 +27,7 @@ export async function POST() {
     );
 
     const coursePoints = await Promise.all(
-      coursesPoints.map(async (course) => ({
+      courses.map(async (course) => ({
         id: Number(course.id),
         vector: await getEmbedding(`${course.name}\n${course.description}\n${course.course_guarantee}`),
         payload: { 
