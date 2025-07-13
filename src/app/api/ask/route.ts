@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
   
   if (match) {
     let context = "";
-    const keys = Object.keys(match.payload);
-    keys.forEach((key) => {
-      context += `${match.payload[key] ?? ""}\n\n`;
+    const entries = Object.entries(match.payload);
+    entries.forEach(([key, value]) => {
+      context += `${key}: ${value ?? ""}\n\n`;
     });
 
     answer = isBurmese
